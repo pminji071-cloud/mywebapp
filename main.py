@@ -1,150 +1,150 @@
 import streamlit as st
 
-# 1. 페이지 설정 (제목, 귀여운 아이콘, 레이아웃)
+# 1. 페이지 기본 설정 (사랑스러운 아이콘과 제목)
 st.set_page_config(
-    page_title="말랑말랑 MBTI 여행지 추천",
-    page_icon="🎈",
+    page_title="설렘 가득 MBTI 여행 추천",
+    page_icon="🌸",
     layout="centered"
 )
 
-# 2. 커스텀 스타일 (Streamlit 기본 폰트 및 스타일을 아기자기하게 다듬기)
+# 2. 커스텀 CSS (사랑스러운 핑크 & 파스텔 톤 테마 적용)
 st.markdown("""
     <style>
+    /* 전체 배경 및 폰트 색상 느낌 맞추기 */
+    .stApp {
+        background-color: #fffafb;
+    }
+    /* 선택 박스 및 버튼 스타일 다듬기 */
     .stSelectbox label {
-        font-size: 1.1rem !important;
+        color: #d63384 !important;
         font-weight: bold;
-        color: #ff6b6b;
     }
     .stButton>button {
         width: 100%;
-        border-radius: 20px;
-        background-color: #ff8e8e;
+        border-radius: 25px;
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
         color: white;
         font-weight: bold;
         border: none;
-        padding: 0.6rem 1rem;
+        padding: 0.7rem 1rem;
         font-size: 1.1rem;
+        box-shadow: 0 4px 10px rgba(255, 154, 158, 0.3);
     }
     .stButton>button:hover {
-        background-color: #ff6b6b;
+        background: linear-gradient(135deg, #fecfef 0%, #ff9a9e 100%);
         color: white;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 3. MBTI 데이터베이스 (귀여운 문구와 캐릭터성 강조)
-mbti_db = {
+# 3. 사랑스러운 문구의 MBTI 여행지 데이터
+mbti_recommendations = {
     "ISTJ": {
-        "place": "스위스 융프라우 🏔️",
-        "tag": "#계획대로_척척 #안전제일 #자연속 힐링",
-        "desc": "기차 시간표가 칼같이 맞아떨어지는 완벽한 질서의 나라! 마음 편히 아름다운 풍경을 감상할 수 있어요."
+        "destination": "스위스 융프라우 🏔️✨",
+        "tagline": "#완벽한_일정 #마음이_편안해지는 #청정자연",
+        "desc": "정확하고 깨끗한 스위스는 마음의 평화를 줘요. 풍경을 바라보며 계획대로 즐기는 완벽한 힐링!"
     },
     "ISFJ": {
-        "place": "일본 교토 🍵",
-        "tag": "#고즈넉함 #따뜻한_온천 #소소한_행복",
-        "desc": "아기자기한 골목과 정갈한 음식이 가득한 곳이에요. 마음의 평화와 온기를 듬뿍 채워 올 수 있답니다."
+        "destination": "일본 교토 🍵🌸",
+        "tagline": "#아기자기한_골목 #온천_힐링 #따스한_감성",
+        "desc": "정갈한 거리와 따뜻한 온천이 기다리는 곳이에요. 소중한 사람과 온기를 나누기 딱 좋은 여행지랍니다."
     },
     "INFJ": {
-        "place": "아이슬란드 🌌",
-        "tag": "#신비로운_오로라 #나만의_시간 #감성_충전",
-        "desc": "웅장한 대자연 속에서 깊은 사색에 잠길 수 있는 몽환적인 곳이에요. 나만의 감성 에너지 충전 완료!"
+        "destination": "아이슬란드 레이캬비크 🌌❄️",
+        "tagline": "#신비로운_오로라 #나만의_사색 #몽환적인_풍경",
+        "desc": "한 편의 동화 같은 오로라 아래에서 깊은 생각과 감성을 채울 수 있는 낭만적인 공간이에요."
     },
     "INTJ": {
-        "place": "영국 런던 🏰",
-        "tag": "#알찬_박물관 #역사_탐방 #지적_호기심",
-        "desc": "계획표 세우는 재미가 쏠쏠한 지적 탐험의 도시! 박물관과 미술관을 구석구석 알차게 정복해 보세요."
+        "destination": "영국 런던 🏰📚",
+        "tagline": "#지적_호기심 #알찬_박물관 #고풍스러운_동선",
+        "desc": "역사와 지성이 숨 쉬는 도시! 마음속 지도를 그리며 구석구석 알차게 탐험해 보세요."
     },
     "ISTP": {
-        "place": "뉴질랜드 퀸스타운 🪂",
-        "tag": "#액티비티_마스터 #스릴_만점 #자유로운_로드트립",
-        "desc": "번지점프부터 스카이다이빙까지! 간섭 없이 내 마음대로 액티비티를 즐기는 내추럴 익스트림 파라다이스."
+        "destination": "뉴질랜드 퀸스타운 🪂🌿",
+        "tagline": "#자유로운_모험 #스릴_만점 #자연그대로",
+        "desc": "바람을 가르며 즐기는 자유! 액티비티를 즐기며 자유로운 에너지를 가득 채워보세요."
     },
     "ISFP": {
-        "place": "인도네시아 발리 🌴",
-        "tag": "#느긋한_휴양 #석양_뷰맛집 #예술가_감성",
-        "desc": "알람 없이 일어나 요가하고, 감성 카페에서 석양을 바라보는 여유! 느긋하고 예쁜 휴식이 기다려요."
+        "destination": "인도네시아 발리 🌴🍹",
+        "tagline": "#포근한_휴식 #아름다운_노을 #예술적_감성",
+        "desc": "느긋하게 일어나 바다를 바라보고, 노을빛 카페에서 여유를 만끽하는 포근한 휴양지예요."
     },
     "INFP": {
-        "place": "체코 프라하 🏰",
-        "tag": "#동화_속_한장면 #낭만과_예술 #낭만적인_야경",
-        "desc": "발길 닿는 곳마다 몽글몽글한 감성이 피어나는 곳. 버스킹 음악을 들으며 골목길을 거닐어 보세요."
+        "destination": "체코 프라하 🏰🎻",
+        "tagline": "#동화_속_한장면 #낭만적인_야경 #감성_충전",
+        "desc": "골목마다 버스킹 음악이 흐르는 감성의 성지! 내 안의 로맨틱한 꿈을 펼쳐보세요."
     },
     "INTP": {
-        "place": "독일 베를린 🍺",
-        "tag": "#자유로운_영혼 #박물관_섬 #내_마음대로_탐방",
-        "desc": "타인의 시선 따위 신경 쓰지 않는 힙하고 지적인 도시! 흥미진진한 역사와 독특한 문화가 가득해요."
+        "destination": "독일 베를린 🎨🍺",
+        "tagline": "#자유로운_영혼 #힙한_예술 #창의적_영감",
+        "desc": "틀에 매이지 않는 독특한 문화와 지적인 박물관들이 당신의 호기심을 반갑게 맞아줄 거예요."
     },
     "ESTP": {
-        "place": "미국 라스베이거스 🎰",
-        "tag": "#화려한_조명 #지루함은_NO #자극_최고조",
-        "desc": "24시간 심장이 쿵쾅거리는 에너제틱 도시! 화려한 쇼와 화끈한 즐길 거리가 매 순간 쏟아져요."
+        "destination": "미국 라스베이거스 🎰✨",
+        "tagline": "#화려한_밤 #심장_쿵쿵 #자극과_즐거움",
+        "desc": "눈이 부시게 화려한 조명과 신나는 퍼포먼스! 지루할 틈 없이 매 순간이 에너제틱해요."
     },
     "ESFP": {
-        "place": "스페인 바르셀로나 💃",
-        "tag": "#매일이_축제 #열정의_도시 #친구_만들기",
-        "desc": "맛있는 타파스와 신나는 해변 파티! 금세 현지인들과 친해져 어울릴 수 있는 흥 부자의 성지입니다."
+        "destination": "스페인 바르셀로나 💃🇪🇸",
+        "tagline": "#열정의_축제 #신나는_해변 #모두가_친구",
+        "desc": "밝은 햇살 아래 맛있는 타파스를 나누고, 어딜 가나 웃음꽃이 피어나는 파티 같은 도시!"
     },
     "ENFP": {
-        "place": "태국 방콕 툭툭이 🛺",
-        "tag": "#알록달록_야시장 #매일_새로워 #통발_탈출",
-        "desc": "맛있는 길거리 음식과 알록달록한 야시장! 예측할 수 없어 더 신나는 모험이 당신을 기다립니다."
+        "destination": "태국 방콕 🛺🌺",
+        "tagline": "#알록달록_야시장 #매일이_통발탈출 #흥미진진",
+        "desc": "통통 튀는 색감과 예측할 수 없는 즐거움! 당신의 호기심을 무한히 자극해 줄 모험지랍니다."
     },
     "ENTP": {
-        "place": "미국 뉴욕 🗽",
-        "tag": "#트렌드_중심 #지루할_틈이_없음 #아이디어_샘솟음",
-        "desc": "자극과 영감이 넘치는 통쾌한 도시! 브로드웨이 뮤지컬부터 팝업 스토어까지 눈 돌릴 틈이 없어요."
+        "destination": "미국 뉴욕 🗽🍕",
+        "tagline": "#트렌드의_중심 #반짝이는_아이디어 #지루함_제로",
+        "desc": "세상의 모든 신선함이 모인 곳! 브로드웨이 뮤지컬부터 힙한 팝업스토어까지 에너지가 솟구쳐요."
     },
     "ESTJ": {
-        "place": "싱가포르 🏙️",
-        "tag": "#칼같은_쾌적함 #완벽한_인프라 #알찬_동선",
-        "desc": "깔끔함, 안전함, 편리함 모두 100점! 계획한 동선대로 척척 진행되는 완벽한 여행을 경험하세요."
+        "destination": "싱가포르 🏙️🌺",
+        "tagline": "#쾌적함_100점 #완벽한_인프라 #알찬_일정",
+        "desc": "깨끗함과 편리함이 조화로운 완벽한 도시! 계획한 대로 차곡차곡 추억을 쌓을 수 있어요."
     },
     "ESFJ": {
-        "place": "이탈리아 피렌체 🍕",
-        "tag": "#맛있는_음식 #다함께_추억 만들기 #친절한_사람들",
-        "desc": "소중한 사람들과 맛있는 파스타를 나눠 먹고 우정을 다지기 딱 좋은 사랑스럽고 정겨운 도시예요."
+        "destination": "이탈리아 피렌체 🍕🍷",
+        "tagline": "#따스한_사람들 #맛있는_음식 #사랑스러운_추억",
+        "desc": "소중한 사람들과 맛있는 음식을 함께 나누며 따뜻한 사랑과 정을 느낄 수 있는 로맨틱한 도시예요."
     },
     "ENFJ": {
-        "place": "프랑스 파리 🥐",
-        "tag": "#로맨틱_피크닉 #감성_도슨트 #타인과의_교감",
-        "desc": "에펠탑 아래 잔디밭에서 소풍을 즐기고, 예술적 감성을 함께 나누는 매력 넘치는 낭만 도시!"
+        "destination": "프랑스 파리 🥐🗼",
+        "tagline": "#에펠탑_피크닉 #감성_교감 #로맨틱_끝판왕",
+        "desc": "에펠탑 아래 잔디밭에서 소풍을 즐기고, 예술과 낭만을 마음껏 주고받는 사랑스러운 공간!"
     },
     "ENTJ": {
-        "place": "아랍에미리트 두바이 🇦🇪",
-        "tag": "#압도적_스케일 #목표_달성 #원탑_리조트",
-        "desc": "세계 최고, 세계 최대의 수식어가 붙는 멋진 도시! 거대한 비전과 럭셔리한 경험이 기다립니다."
+        "destination": "아랍에미리트 두바이 🇦🇪✨",
+        "tagline": "#압도적_스케일 #럭셔리_원탑 #멋진_비전",
+        "desc": "세계 최고를 자랑하는 웅장한 도시! 원대한 꿈과 멋진 도전을 자극하는 최고급 여행지예요."
     }
 }
 
-# 4. 앱 헤더 영역
-st.text("✨ 뽀짝뽀짝 MBTI 여행 가이드 ✨")
-st.title("💖 나랑 딱 맞는 여행지는 어디?")
-st.caption("내 성격 유형에 꼭 맞춰진 찰떡 여행지를 찾아보세요!")
+# 4. 화면 헤더 구성
+st.markdown("<p style='text-align: center; color: #ff85a2; font-weight: bold;'>💗 마음을 설레게 하는 MBTI 여행 가이드 💗</p>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center; color: #d63384;'>✨ 나에게 딱 맞는 러블리 여행지는? ✨</h2>", unsafe_allow_html=True)
+st.write("")
 
-st.write("") # 여백
+# 5. MBTI 선택
+mbti_list = list(mbti_recommendations.keys())
+selected_mbti = st.selectbox("당신의 MBTI 유형을 선택해 주세요 🎀", mbti_list)
 
-# 5. MBTI 선택창
-selected_mbti = st.selectbox(
-    "👉 당신의 MBTI를 선택해 주세요!",
-    options=list(mbti_db.keys()),
-    index=0
-)
+st.write("")
 
-st.write("") # 여백
-
-# 6. 결과 확인 버튼 및 결과 출력
-if st.button("✈️ 추천 여행지 확인하기!", type="primary"):
-    # 귀여운 풍선 효과
-    st.balloons()
+# 6. 결과 확인 및 효과
+if st.button("💖 나만의 추천 여행지 확인하기 💖", type="primary"):
+    # 사랑스러운 눈꽃/풍선 효과
+    st.snow()
     
-    data = mbti_db[selected_mbti]
+    data = mbti_recommendations[selected_mbti]
     
-    # 귀여운 상자 스타일로 결과 출력
-    with st.container():
-        st.markdown(f"### 🎉 **{selected_mbti}** 유형에게 꼭 맞는 추천지")
-        st.header(data["place"])
-        
-        st.write(f"**{data['tag']}**")
-        st.info(f"💡 {data['desc']}")
-        
-    st.success("✨ 떠날 준비 되셨나요? 즐거운 여행 계획을 세워보세요!")
+    st.write("")
+    st.markdown(f"#### 💌 **{selected_mbti}** 님만을 위한 추천")
+    st.header(data["destination"])
+    
+    # 핑크빛 안채 상자
+    st.write(f"**{data['tagline']}**")
+    st.info(f"🌸 **사랑스러운 포인트:** {data['desc']}")
+    
+    st.success("💕 소중한 사람들과 함께 행복한 여행을 꿈꿔보세요!")
